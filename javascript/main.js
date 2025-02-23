@@ -1,13 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const contactForm = document.getElementById("contact-form");
-    if (contactForm) {
-        contactForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            alert("Thank you for reaching out! We'll get back to you soon.");
-        });
-    }
-
-    const sections = document.querySelectorAll("section");
+   const sections = document.querySelectorAll("section");
     const nav = document.querySelector("nav");
     let currentTheme = "";
 
@@ -89,5 +80,39 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
     document.head.appendChild(style);
 
-});
 
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const contactForm = document.getElementById("contact-form");
+    
+        if (contactForm) {
+            contactForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+    
+                const name = document.getElementById("name").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const message = document.getElementById("message").value.trim();
+    
+                if (!name || !email || !message) {
+                    alert("All fields are required.");
+                    return;
+                }
+    
+                try {
+                    const response = await fetch("/send-message", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name, email, message }),
+                    });
+    
+                    const result = await response.json();
+                    alert(result.message);
+                    contactForm.reset();
+                } catch (error) {
+                    console.error("Error submitting form:", error);
+                    alert("Something went wrong. Please try again later.");
+                }
+            });
+        }
+    });
+    
